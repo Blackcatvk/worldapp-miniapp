@@ -6,22 +6,39 @@ import './App.css';
 
 function App() {
   const [authCode, setAuthCode] = useState(null);
-  const [token, setToken] = useState(null);
+  const [accessToken, setAccessToken] = useState(null);
   const [userData, setUserData] = useState(null);
   
   // Capturamos el parámetro "code" de la URL después de la redirección
   useEffect(() => {
-    // Extraemos el código de autorización de la URL
     const urlParams = new URLSearchParams(window.location.search);
-    const code = urlParams.get('code'); // Este es el código de autorización
-    const token = urlParams.get('token'); // Si el token está en la URL (si lo tienes)
+    const code = urlParams.get('code');
 
     if (code) {
       setAuthCode(code); // Guardamos el código de autorización
-      // También puedes almacenar el token si lo recibes en la URL
-      setToken(token);
       console.log("Código de autorización:", code);
-      console.log("Token:", token);
+
+      // Intercambiamos el código por el token de acceso
+      fetch('http://localhost:3000/get-access-token', { // Cambia esto por la URL de tu servidor backend
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ code }),
+      })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.access_token) {
+          setAccessToken(data.access_token); // Guardamos el token de acceso
+          console.log("Token de acceso recibido:", data.access_token);
+        } else {
+          alert("Error al obtener el token de acceso");
+        }
+      })
+      .catch((error) => {
+        console.error("Error al intercambiar el código por el token:", error);
+        alert("Error al intercambiar el código por el token");
+      });
     }
   }, []);
 
@@ -78,7 +95,7 @@ function App() {
         {({ open }) => <button onClick={open}>Verificar con World ID</button>}
       </IDKitWidget>
 
-      {authCode && <div>¡Código de autorización recibido: {authCode}</div>}
+      {accessToken && <div>¡Token de acceso recibido! Puedes acceder a los datos del usuario.</div>}
     </div>
   );
 }

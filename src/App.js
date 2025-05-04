@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from 'react';
-import { useHistory } from 'react-router-dom'; // Si usas react-router-dom para navegar (opcional)
+import React, { useEffect, useState } from 'react'; 
 import { db } from './firebase';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import './App.css';
+import { IDKitWidget } from '@worldcoin/idkit';
 
 function App() {
   const [authCode, setAuthCode] = useState(null);
@@ -43,11 +43,12 @@ function App() {
   }, []);
 
   const handleVerify = async (proof) => {
-    const nullifier = proof.nullifier_hash;
-    if (!nullifier) {
-      alert("Verificación fallida");
+    if (!proof || !proof.nullifier_hash) {
+      alert("Verificación fallida, falta proof o nullifier_hash");
       return;
     }
+
+    const nullifier = proof.nullifier_hash;
 
     try {
       const userRef = doc(db, "usuarios", nullifier);

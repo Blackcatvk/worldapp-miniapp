@@ -6,26 +6,9 @@ import './App.css';
 import logo from './logo.svg'; // Importamos el logo como en el template original
 
 function App() {
-  const [authCode, setAuthCode] = useState(null);
-  const [token, setToken] = useState(null);
-  const [userData, setUserData] = useState(null);
-  
-  // Capturamos el parámetro "code" de la URL después de la redirección
-  useEffect(() => {
-    // Extraemos el código de autorización de la URL
-    const urlParams = new URLSearchParams(window.location.search);
-    const code = urlParams.get('code'); // Este es el código de autorización
-    const token = urlParams.get('token'); // Si el token está en la URL (si lo tienes)
+  const [count, setCount] = useState(0);
 
-    if (code) {
-      setAuthCode(code); // Guardamos el código de autorización
-      // También puedes almacenar el token si lo recibes en la URL
-      setToken(token);
-      console.log("Código de autorización:", code);
-      console.log("Token:", token);
-    }
-  }, []);
-
+  // Manejo de verificación de World ID
   const handleVerify = async (proof) => {
     const nullifier = proof.nullifier_hash;
     if (!nullifier) {
@@ -59,27 +42,30 @@ function App() {
 
   return (
     <div className="App">
-      <h1>Bienvenido a WorldCat Conquest</h1>
-      <button onClick={() => console.log('Clicks!')}>
-        Clicks: {authCode ? "Código capturado" : "Esperando autorización..."}
-      </button>
-      <p>Obtén terrenos y gana monedas WLD</p>
+      <header className="App-header">
+        {/* Logo del template */}
+        <img src={logo} className="App-logo" alt="logo" />
+        <h1>Bienvenido a WorldCat Conquest</h1>
+        <button onClick={() => setCount(count + 1)} className="App-button">
+          Clicks: {count}
+        </button>
+        <p>Obtén terrenos y gana monedas WLD</p>
 
-      <IDKitWidget
-        app_id="app_9107e5e1f88c0e8e568869ccb2fa3fed"
-        action="worldapp_login"
-        signal="ingresoapp"
-        handleVerify={handleVerify}
-        onSuccess={handleSuccess}
-        onError={(err) => {
-          console.error("❌ Error en World ID:", err);
-          alert("Error con la verificación");
-        }}
-      >
-        {({ open }) => <button onClick={open}>Verificar con World ID</button>}
-      </IDKitWidget>
-
-      {authCode && <div>¡Código de autorización recibido: {authCode}</div>}
+        {/* Widget de verificación de World ID */}
+        <IDKitWidget
+          app_id="app_9107e5e1f88c0e8e568869ccb2fa3fed"
+          action="worldapp_login"
+          signal="ingresoapp"
+          handleVerify={handleVerify}
+          onSuccess={handleSuccess}
+          onError={(err) => {
+            console.error("❌ Error en World ID:", err);
+            alert("Error con la verificación");
+          }}
+        >
+          {({ open }) => <button onClick={open} className="App-button">Verificar con World ID</button>}
+        </IDKitWidget>
+      </header>
     </div>
   );
 }

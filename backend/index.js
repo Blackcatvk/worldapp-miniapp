@@ -2,24 +2,33 @@ const express = require('express');
 const cors = require('cors');
 
 const app = express();
+const tasks = []; // 🔸 Memoria temporal
 
 app.use(cors());
-app.use(express.json()); // Permite recibir JSON en el body
+app.use(express.json());
 
-// Ruta para agregar tareas
+// 🔹 POST: agregar tarea
 app.post('/tasks', (req, res) => {
   const { title } = req.body;
-  console.log('Nueva tarea:', title);
-  // Aquí podrías guardar la tarea en una base de datos, etc.
-  res.status(201).json({ message: 'Tarea creada' });
+  if (!title) return res.status(400).json({ error: 'Title is required' });
+
+  const newTask = { id: Date.now(), title };
+  tasks.push(newTask);
+  console.log('Tarea agregada:', newTask);
+  res.status(201).json(newTask);
 });
 
-// Ruta simple de prueba
+// 🔹 GET: devolver todas las tareas
+app.get('/tasks', (req, res) => {
+  res.json(tasks);
+});
+
+// 🔹 Ruta base para probar que el servidor responde
 app.get('/', (req, res) => {
   res.send('API activa');
 });
 
-// INDISPENSABLE para que Render funcione
+// 🔹 Escuchar el puerto asignado por Render
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Servidor escuchando en el puerto ${PORT}`);

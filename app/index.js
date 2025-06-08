@@ -7,14 +7,14 @@ document.addEventListener('DOMContentLoaded', () => {
     e.preventDefault();
     const title = taskInput.value;
     if (title) {
-      const response = await axios.post('http://localhost:3000/tasks', { title });
+      const response = await axios.post('https://worldapp-miniapp.onrender.com/tasks', { title });
       loadTasks();
       taskInput.value = '';
     }
   });
 
   const loadTasks = async () => {
-    const response = await axios.get('http://localhost:3000/tasks');
+    const response = await axios.get('https://worldapp-miniapp.onrender.com/tasks');
     taskList.innerHTML = '';
     response.data.forEach(task => {
       const li = document.createElement('li');
